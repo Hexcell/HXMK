@@ -39,3 +39,6 @@ dir_not_found	= error + "\"%s\" is not a directory" + reset
 
 # other
 clean_not_found	= error + ".clean file not found" + reset
+cleaning		= info + "Cleaning..." + reset
+cleaning_done	= info + "Cleaning done, " + reset + "%i files " + info + "and" + reset + " %i dirs " + info + "removed" + reset
+deleting		= Fore.RED + "Deleting %s" + reset

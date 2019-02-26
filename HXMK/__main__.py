@@ -1,4 +1,4 @@
-import sys, os, importlib.util, json, glob
+import sys, os, importlib.util, json, glob, shutil
 
 from . import hxparser, coloring
 
@@ -238,7 +238,30 @@ class Environment:
 		self.args = argdict
 
 	def clean(self):
-		raise NotImplementedError
+		if not os.path.isfile(".clean"):
+			print(coloring.clean_not_found)
+			exit(1)
+
+		print(coloring.cleaning)
+
+		files, folders = (0, 0)
+		cleanfile = open(".clean", "r").readlines()
+		for line in cleanfile:
+			for file in glob.iglob(line.strip()):
+				if os.path.exists(file):
+					print(coloring.deleting % file)
+					if os.path.isfile(file):
+						os.remove(file)
+						files += 1
+					elif os.path.isdir(file):
+						shutil.rmtree(file)
+						folders += 1
+		if os.path.isfile(".hxmkcache"):
+			print(coloring.deleting % ".hxmkcache")
+			files += 1
+			os.remove(".hxmkcache")
+
+		print(coloring.cleaning_done % (files, folders))
 
 	def execute_in(self, path, mlocals):
 		"""
