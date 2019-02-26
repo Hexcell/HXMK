@@ -35,7 +35,21 @@ Arguments are specified like `name=value` and rules like `name`
 
 In case no rule was given, HXMK will look for the rule `@all` and execute it, if it exists.
 
-#### `hxmk.py`
+HXMK can also be used to clean directories.
+```shell
+hxmk clean [args|rules]
+```
+This will look for a `.clean` file that contains a [glob](https://docs.python.org/3/library/glob.html#glob.glob) pattern on each line.
+Eg.:
+```shell
+bin
+obj
+*.o
+__pycache__
+```
+Only doing `hxmk clean` will not run the rule `@all`.
+
+### `hxmk.py`
 ##### Rules
 The simplest rule would look something like this:
 ```py

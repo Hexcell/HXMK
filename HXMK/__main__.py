@@ -250,7 +250,7 @@ class Environment:
 		files, folders = (0, 0)
 		cleanfile = open(".clean", "r").readlines()
 		for line in cleanfile:
-			for file in glob.iglob(line.strip()):
+			for file in glob.iglob(line.strip(), recursive=True):
 				if os.path.exists(file):
 					print(coloring.deleting % file)
 					if os.path.isfile(file):
