@@ -1,0 +1,6 @@
+__pycache__/
+.vscode/
+bin/
+dist/
+*.egg-info
+.hxmkcache
