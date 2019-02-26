@@ -16,6 +16,8 @@ class Commander:
 		if code != 0:
 			print(coloring.error_command % ("Exited with code " + str(code)))
 			exit(1)
+		
+		return self
 
 class Environment:
 	def __init__(self, path, args=sys.argv[1:], mlocals={}, root=True, project_root=None, name=""):
@@ -52,9 +54,6 @@ class Environment:
 		if type(l) is dict:
 			if prefix or suffix: raise ValueError
 			return "\"" + ("\" \"".join([(x.replace("\"", "\\\"") + "=" + l[x].replace("\"", "\\\"")) for x in l])) + "\""
-
-	def files(self, pattern, prefix="", suffix=""):
-		return glob.glob(pattern)
 
 	def make(self, path, args=[], isolate=False):
 		if not os.path.isdir(path):
@@ -186,6 +185,10 @@ class Environment:
 				self.locals[attr] = getattr(self.module, attr)
 
 	def exists_str_list(self, v):
+		if not type(v) in [str, list, tuple]:
+			print(coloring.invalid_decorator_params % (str(v), "path"))
+			exit(1)
+
 		x = v
 		if type(x) is str:
 			x = [x]
@@ -294,7 +297,7 @@ class Environment:
 		module.rule = self.rule
 		module.pattern = self.pattern
 		module.default = self.default
-		module.files = self.files
+		module.glob = glob.glob
 		module.as_args = self.as_args
 		module.make = self.make
 		module.is_root = self.is_root
