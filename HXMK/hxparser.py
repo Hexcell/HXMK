@@ -1,7 +1,10 @@
 from lark import Lark
 from lark.indenter import Indenter
 
-from . import hxtree
+try:
+	from . import hxtree
+except Exception:
+	import hxtree
 
 grammar = r"""
 start		: pattern _ARROW pattern

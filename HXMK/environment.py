@@ -1,6 +1,9 @@
 import sys, os, importlib.util, json, glob, shutil
 
-from . import hxparser, coloring
+try:
+	from . import hxparser, coloring
+except Exception:
+	import hxparser, coloring
 
 class Commander:
 	def __init__(self, env):
@@ -80,7 +83,10 @@ class Environment:
 
 # DECORATORS
 	def rule(self, *, trigger="always", path=""):
-		
+		"""
+		A decorator that takes care of rules.
+		"""
+
 		if not trigger in ["always", "change", "not_found", "change+not_found"]:
 			print(coloring.invalid_decorator_params % (trigger, "trigger"))
 			exit(1)
@@ -347,3 +353,6 @@ class Environment:
 
 		# write the cache
 		json.dump(self.cache, open(cachefile, "w"))
+
+if __name__ == "__main__":
+	Environment(input("> "))
