@@ -1,3 +1,3 @@
 @rule()
-def all(c):
+def everything(c):
 	c << "pip install ."

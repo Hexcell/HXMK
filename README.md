@@ -33,7 +33,7 @@ hxmk [args|rules]
 ```
 Arguments are specified like `name=value` and rules like `name`
 
-In case no rule was given, HXMK will look for the rule `@all` and execute it, if it exists.
+In case no rule was given, HXMK will look for the rule `@everything` and execute it, if it exists.
 
 HXMK can also be used to clean directories.
 ```shell
@@ -47,35 +47,35 @@ obj
 *.o
 __pycache__
 ```
-Only doing `hxmk clean` will not run the rule `@all`.
+Only doing `hxmk clean` will not run the rule `@everything`.
 
 ### `hxmk.py`
 ##### Rules
 The simplest rule would look something like this:
 ```py
 @rule()
-def all(c):
+def everything(c):
     pass
 ```
 `c` is an instance of the class `Commander`, it is used to execute commands. To do so, it overloads the lshift operator.
 ```py
 @rule()
-def all(c):
+def everything(c):
     c << "echo Commands are executed like this."
 ```
 Rules can have dependencies. They are given through the return annotation. A rules dependencies are executed before it.
 ```py
 @rule()
-def all(c) -> "other":
+def everything(c) -> "other":
     c << "echo What a lovely day it is today."
 
 def other(c):
-    c << "echo @all depends on me so I go first!"
+    c << "echo @everything depends on me so I go first!"
 ```
 Multiple dependencies are given in a list or tuple, whichever you prefer.
 ```py
 @rule()
-def all(c) -> ("other", "something")
+def everything(c) -> ("other", "something")
 ```
 
 Rules have triggers, which are state if and when a rule shall be executed. The default trigger is `always`.
@@ -130,13 +130,13 @@ By default all variables from the root module are readable in every module calle
 # hxmk.py
 somevar = "hello"
 @rule()
-def all(c):
+def everything(c):
     make("other")
 ```
 ```py
 # other/hxmk.py
 @rule()
-def all(c):
+def everything(c):
     print(somevar)
 ```
 ```shell

@@ -339,9 +339,9 @@ class Environment:
 				print(coloring.rule_not_found % flag)
 				exit()
 
-		# execute "all" if no rule was executed
-		if not ex and "all" in self.rules:
-			self.rules["all"](Commander(self))
+		# execute "everything" if no rule was executed
+		if not ex and "everything" in self.rules:
+			self.rules["everything"](Commander(self))
 
 		# write the cache
 		json.dump(self.cache, open(cachefile, "w"))
