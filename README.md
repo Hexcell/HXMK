@@ -87,11 +87,10 @@ def dirs(c):
 ```
 The following triggers are implemented so far:
  - `always`, always execute the rule.
- - `change`, execute it if something change, eg. a dependencies commands were executed.
- - `not_found`, execute when a specific path is not found (file or folder). An additional parameter `path` is required. `path` can be a string, list or tuple.
- - `change+not_found`, a mixture of `change` and `not_found`, execute when either something changed or a specific path is not found. Also requires the `path` parameter.
-
-Rules don't support caching (yet), for that functionality, look at Pattern Rules.
+ - `dependencies`, execute it if one or more dependency did something, eg. its commands were executed.
+ - `not_found`, execute when a specific path is not found (file or folder). An additional parameter `path` is required. `path` can be a `str`, `list` or a `tuple`.
+ - `dependencies+not_found`, a mixture of `dependencies` and `not_found`, execute when either a dependency did something or a specific path is not found. Also requires the `path` parameter.
+ - `changed+not_found`, execute only if the source files changed (or are not found in the cache), or when the destination file is not found. The additional parameters `path` and `dest` are required, they can be a `str`, `list` or a `tuple`. It is so far the only rule trigger that supports caching (Patterns support caching, for more advanced functionality you might wanna look into those).
 
 If `not_found` or `change+not_found` is used, the rule will assume that you are going to create the specified path. If that path is not found after the Rule was executed, a warning will be shown.
 

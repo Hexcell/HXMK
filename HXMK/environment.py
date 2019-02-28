@@ -82,20 +82,26 @@ class Environment:
 		return self.root
 
 # DECORATORS
-	def rule(self, *, trigger="always", path=""):
+	def rule(self, *, trigger="always", path="", dest=""):
 		"""
 		A decorator that takes care of rules.
 		"""
 
-		if not trigger in ["always", "change", "not_found", "change+not_found"]:
+		# parameter checking
+		# TODO: make this better
+		if not trigger in ["always", "dependencies", "not_found", "dependencies+not_found", "changed+not_found"]:
 			print(coloring.invalid_decorator_params % (trigger, "trigger"))
 			exit(1)
-
-		if path and not trigger in ["not_found", "change+not_found"]:
+		if path and not trigger in ["not_found", "dependencies+not_found"]:
 			print(coloring.unexpected_param % "path")
 			exit(1)
+		if dest and not trigger in ["changed+not_found"]:
+			print(coloring.unexpected_param % "dest")
+			exit(1)
 
+		# TODO: prettier error message
 		if not type(path) in [str, list]: raise ValueError
+		if not type(dest) in [str, list]: raise ValueError
 
 		def rule_decorator(func):
 			rule_name = (self.name + "/" if self.name else "", func.__name__)
@@ -113,7 +119,8 @@ class Environment:
 
 				# execute self
 				did_something = False
-				if trigger == "always" or (trigger == "change" and deps_did_something) or (trigger == "not_found" and not self.exists_str_list(path)) or (trigger == "change+not_found" and (deps_did_something or not self.exists_str_list(path))):
+				# TODO: make this prettier
+				if trigger == "always" or (trigger == "dependencies" and deps_did_something) or (trigger == "not_found" and not self.exists_str_list(path)) or (trigger == "dependencies+not_found" and (deps_did_something or not self.exists_str_list(path))) or (trigger == "changed+not_found" and (deps_did_something or not self.exists_str_list(dest) or self.files_changed(path))):
 					print(coloring.executing_rule % rule_name)
 					func(c)
 					did_something = True
@@ -230,6 +237,22 @@ class Environment:
 			return False
 
 		return True
+
+	def files_changed(self, tsrc):
+		src = tsrc
+		if type(scr) is str: scr = [scr]
+
+		for file in src:
+			# file hasn't been cached
+			if not file in self.cache:
+				return True
+			# get the last modification time
+			mtime = str(os.stat(file).st_mtime)
+			# the file has been modified
+			if self.cache[file] != mtime:
+				return True
+		
+		return False
 
 	def parse_args(self, args):
 		"""
