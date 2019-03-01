@@ -92,7 +92,7 @@ class Environment:
 		if not trigger in ["always", "dependencies", "not_found", "dependencies+not_found", "changed+not_found"]:
 			print(coloring.invalid_decorator_params % (trigger, "trigger"))
 			exit(1)
-		if path and not trigger in ["not_found", "dependencies+not_found"]:
+		if path and not trigger in ["not_found", "dependencies+not_found", "changed+not_found"]:
 			print(coloring.unexpected_param % "path")
 			exit(1)
 		if dest and not trigger in ["changed+not_found"]:
