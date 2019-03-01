@@ -240,7 +240,7 @@ class Environment:
 
 	def files_changed(self, tsrc):
 		src = tsrc
-		if type(scr) is str: scr = [scr]
+		if type(src) is str: src = [src]
 
 		for file in src:
 			# file hasn't been cached
