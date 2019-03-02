@@ -55,7 +55,11 @@ obj
 *.o
 __pycache__
 ```
-Only doing `hxmk clean` will not run the rule `@everything`.
+
+`clean` counts as a rule (although it's not an actual rule), so the rule `@everything` will not be run if not explicitly stated like this:
+```shell
+hxmk clean everything # will clean and THEN run @everything
+```
 
 ### `hxmk.py`
 ##### Rules
