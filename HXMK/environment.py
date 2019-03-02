@@ -87,17 +87,24 @@ class Environment:
 		A decorator that takes care of rules.
 		"""
 
+		if type(trigger) is str: trigger = [trigger]
+
 		# parameter checking
-		# TODO: make this better
-		if not trigger in ["always", "dependencies", "not_found", "dependencies+not_found", "changed+not_found"]:
-			print(coloring.invalid_decorator_params % (trigger, "trigger"))
+		if "always" in trigger and len(trigger) > 1:
+			print(coloring.always_overrides)
 			exit(1)
-		if path and not trigger in ["not_found", "dependencies+not_found", "changed+not_found"]:
-			print(coloring.unexpected_param % "path")
-			exit(1)
-		if dest and not trigger in ["changed+not_found"]:
-			print(coloring.unexpected_param % "dest")
-			exit(1)
+
+		for t in trigger:
+			if not t in ["always", "dependencies", "not_found", "changed"]:
+				print(coloring.invalid_decorator_params % (trigger, "trigger"))
+				exit(1)
+
+			if t == "not_found" and not dest:
+				print(coloring.expects_param % (t, "dest"))
+				exit(1)
+			elif t == "changed" and not path:
+				print(coloring.expects_param % (t, "path"))
+				exit(1)
 
 		# TODO: prettier error message
 		if not type(path) in [str, list]: raise ValueError
@@ -120,15 +127,15 @@ class Environment:
 				# execute self
 				did_something = False
 				# TODO: make this prettier
-				if trigger == "always" or (trigger == "dependencies" and deps_did_something) or (trigger == "not_found" and not self.exists_str_list(path)) or (trigger == "dependencies+not_found" and (deps_did_something or not self.exists_str_list(path))) or (trigger == "changed+not_found" and (deps_did_something or not self.exists_str_list(dest) or self.files_changed(path))):
+				if self.check_triggers(trigger, deps_did_something, path, dest):
 					print(coloring.executing_rule % rule_name)
 					func(c)
 					did_something = True
 				
 				# check if expectation was met
-				v = path
+				v = dest
 				if type(v) is str: v = [v]
-				if trigger == "not_found":
+				if "not_found" in trigger:
 					for p in v:
 						if not os.path.exists(p):
 							print(coloring.expectation_not_met % p)
@@ -138,7 +145,7 @@ class Environment:
 					print(coloring.up_to_date % rule_name)
 
 				# return
-				if trigger == "always":
+				if "always" in trigger:
 					return False
 				return did_something
 
@@ -194,6 +201,19 @@ class Environment:
 		return pattern_decorator
 
 # INTERNAL UTILS
+	def check_triggers(self, trigger, deps_did_something, path, dest):
+		for t in trigger:
+			if t == "always":
+				return True
+			elif t == "dependencies":
+				if deps_did_something: return True
+			elif t == "not_found":
+				if not self.exists_str_list(dest): return True
+			elif t == "changed":
+				if self.files_changed(path): return True
+			
+			return False
+
 	def update_locals(self):
 		for attr in [x for x in dir(self.module) if x not in self.mask + ["__builtins__"]]:
 			if not attr in self.rules:
@@ -243,13 +263,19 @@ class Environment:
 		if type(src) is str: src = [src]
 
 		for file in src:
+			if not os.path.exists(file):
+				print(coloring.cache_file_missing % file)
+				exit(1)
+
 			# file hasn't been cached
 			if not file in self.cache:
+				self.cache[file] = str(os.stat(file).st_mtime)
 				return True
 			# get the last modification time
 			mtime = str(os.stat(file).st_mtime)
 			# the file has been modified
 			if self.cache[file] != mtime:
+				self.cache[file] = mtime
 				return True
 		
 		return False
