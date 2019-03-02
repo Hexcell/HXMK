@@ -3,8 +3,8 @@ HXMK is a python-based build system for the Hexcell Projects. It brings a Makefi
 
 Best of all: it has nice colors
 
-![colors2](https://raw.githubusercontent.com/Hexcell/HXMK/master/screenshots/colors2.png "colors2")
-![alt](https://raw.githubusercontent.com/Hexcell/HXMK/master/screenshots/colors.png "colors")
+![colors2](https://raw.githubusercontent.com/Hexcell/HXMK/master/screenshots/colors2.png)
+![colors](https://raw.githubusercontent.com/Hexcell/HXMK/master/screenshots/colors.png)
 
 ### Installation
 ```shell
@@ -89,7 +89,7 @@ The following triggers are implemented so far:
  - `always`, always execute the rule.
  - `dependencies`, execute it if one or more dependency did something, eg. its commands were executed.
  - `not_found`, execute when a specific path is not found (file or folder). An additional parameter `dest` is required. `dest` can be a `str`, `list`, or a `tuple`.
- - `changed`, cache a file or list of files. Execute when either any of the specified files is not found in the cache or when any of the files have been changed. An additional parameter `path` is required. `path` can be a `str`, `list`, or a `tuple`
+ - `changed`, cache a file or list of files. Execute when either any of the specified files is not found in the cache or when any of those files have been changed. An additional parameter `path` is required. `path` can be a `str`, `list`, or a `tuple`
 
 If `not_found` is used, the rule will assume that you are going to create the specified path. If that path is not found after the Rule was executed, a warning will be shown.
 
