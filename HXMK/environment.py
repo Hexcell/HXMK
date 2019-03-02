@@ -82,6 +82,7 @@ class Environment:
 		return self.root
 
 # DECORATORS
+	# TODO: consider syntax in IDEA.md
 	def rule(self, *, trigger="always", path="", dest=""):
 		"""
 		A decorator that takes care of rules.
@@ -126,7 +127,6 @@ class Environment:
 
 				# execute self
 				did_something = False
-				# TODO: make this prettier
 				if self.check_triggers(trigger, deps_did_something, path, dest):
 					print(coloring.executing_rule % rule_name)
 					func(c)
@@ -376,6 +376,7 @@ class Environment:
 		for a in new_attrs:
 			attr = getattr(module, a)
 			# if it's callable, it's a rule
+			# TODO: find a better solution, this is error prone
 			if callable(attr):
 				self.rules[a] = attr
 

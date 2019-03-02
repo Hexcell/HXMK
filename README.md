@@ -31,16 +31,24 @@ If the project directory contains a `hxmk.py` file, you can do
 ```shell
 hxmk [args|rules]
 ```
-Arguments are specified like `name=value` and rules like `name`
+Arguments are specified like `name=value` and rules like `name`.
+```shell
+hxmk abc=123 somerule
+```
 
-In case no rule was given, HXMK will look for the rule `@everything` and execute it, if it exists.
+In case no rule was given, HXMK will look for the rule `@everything` and execute it (if it exists).
+No arguments or rules have to be specified be default.
+```shell
+hxmk # <- this is completely valid
+```
 
 HXMK can also be used to clean directories.
 ```shell
 hxmk clean [args|rules]
 ```
 This will look for a `.clean` file that contains a [glob](https://docs.python.org/3/library/glob.html#glob.glob) pattern on each line.
-Eg.:
+
+Example of a `.clean` file:
 ```shell
 bin
 obj
@@ -78,7 +86,7 @@ Multiple dependencies are given in a list or tuple, whichever you prefer.
 def everything(c) -> ("other", "something")
 ```
 
-Rules have triggers, which are state if and when a rule shall be executed. The default trigger is `always`. `trigger` can be a `list` or `tuple` of multiple triggers.
+Rules have triggers, which are state if and when a rule shall be executed. The default trigger is `always`. `trigger` can be a `str`, but it might also be a `list` or `tuple` of multiple triggers. Some triggers require additional parameters.
 ```py
 @rule(trigger="not_found", dest=["bin", "obj"])
 def dirs(c):
@@ -92,6 +100,11 @@ The following triggers are implemented so far:
  - `changed`, cache a file or list of files. Execute when either any of the specified files is not found in the cache or when any of those files have been changed. An additional parameter `path` is required. `path` can be a `str`, `list`, or a `tuple`
 
 If `not_found` is used, the rule will assume that you are going to create the specified path. If that path is not found after the Rule was executed, a warning will be shown.
+
+An example of a caching rule:
+```py
+@rule(trigger=["not_found", "changed"], path=["a.cpp", "b.cpp"], dest="program")
+```
 
 ##### Patterns
 Patterns are Rules that are executed multiple times for multiple files.
@@ -195,3 +208,20 @@ It could be used in combination with `as_args` to link all object files.
 
 >>> ld ... "main.o" "utils.o"
 ```
+
+### Goals
+The main goal is to create a simple build too with the same functionality as make (+ more) while maintaining readability and sanity.
+
+Currently, HXMK runs just fine, but there have been and will most likely be many API changes. Bugs are to be expected, if you find one, do not hesitate to create an issue.
+
+#### TODO
+ - [x] rules
+ - [x] pattern eules
+ - [x] argument parsing
+ - [x] build subdirectories
+ - [x] cleaning
+ - [ ] add docstrings and comments for every function
+ - [ ] full api documentation
+
+### Contributing
+Any form of contribution is welcome ^^
