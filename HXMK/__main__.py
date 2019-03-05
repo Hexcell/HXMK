@@ -1,5 +1,5 @@
 import os
-from .environment import Environment
+from .environment import main
 
 if __name__ == "__main__":
-	Environment(os.getcwd())
+	main()

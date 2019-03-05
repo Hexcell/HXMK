@@ -8,22 +8,15 @@ Best of all: it has nice colors
 
 ### Installation
 ```shell
+pip install HXMK
+```
+
+##### Manual (latest version)
+```shell
 $ git clone https://github.com/Hexcell/HXMK.git
 $ cd HXMK
 
-$ python -m HXMK
-#or
 $ pip install .
-```
-You will need an alias in your .bashrc to use it properly (Unix)
-```shell
-alias hxmk="python -m HXMK"
-```
-To update:
-```shell
-$ git clone https://github.com/Hexcell/HXMK.git
-$ cd HXMK
-$ hxmk
 ```
 
 ### Usage

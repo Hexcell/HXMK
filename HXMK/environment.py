@@ -404,5 +404,9 @@ class Environment:
 		# write the cache
 		json.dump(self.cache, open(cachefile, "w"))
 
+def main():
+	Environment(os.getcwd())
+
 if __name__ == "__main__":
+	# this is useful for debugging
 	Environment(input("> "))
