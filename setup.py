@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setup(
 	name				= "HXMK",
-	version				= "0.0.4",
+	version				= "0.0.5",
 	url					= "https://github.com/Hexcell/HXMK.git",
 	author 				= "Hexcell",
 	author_email		= "fabian0010k@gmail.com",

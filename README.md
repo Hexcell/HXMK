@@ -224,6 +224,7 @@ Currently, HXMK runs just fine, but there have been and will most likely be many
  - [x] cleaning
  - [ ] add docstrings and comments for every function
  - [ ] full api documentation
+ - [ ] better cross-platform support / more builtins (mkdir, ...)
 
 ### Contributing
 Any form of contribution is welcome ^^
