@@ -83,28 +83,33 @@ Multiple dependencies are given in a list or tuple, whichever you prefer.
 def everything(c) -> ("other", "something")
 ```
 
-Rules have triggers, which are state if and when a rule shall be executed. The default trigger is `always`. `trigger` can be a `str`, but it might also be a `list` or `tuple` of multiple triggers. Some triggers require additional parameters.
+Rules have triggers, which are state if and when a rule shall be executed. If no trigger is specified, the trigger `always` will be set to `True`.
+
+For example, to execute a rule whenever at least one of the folders `bin` and `obj` are missing, you could do the following:
 ```py
-@rule(trigger="not_found", dest=["bin", "obj"])
+@rule(not_found=["bin", "obj"])
 def dirs(c):
     c << "mkdir -p bin"
     c << "mkdir -p obj"
 ```
 The following triggers are implemented so far:
- - `always`, always execute the rule.
- - `dependencies`, execute it if one or more dependency did something, eg. its commands were executed.
- - `not_found`, execute when a specific path is not found (file or folder). An additional parameter `dest` is required. `dest` can be a `str`, `list`, or a `tuple`.
- - `changed`, cache a file or list of files. Execute when either any of the specified files is not found in the cache or when any of those files have been changed. An additional parameter `path` is required. `path` can be a `str`, `list`, or a `tuple`
+ - `always`, always execute the rule. It is a bool.
+ - `dependencies`, execute it if one or more dependencies were executed. It is a bool.
+ - `not_found`, execute when a specified path is not found (file or folder). It can be a `str`, `list` or a `tuple`.
+ - `changed`, cache a file or list of files. Execute when any of the specified files are not found in the cache or have been changed. It can be a `str`, `list`, or a `tuple`.
 
-If `not_found` is used, the rule will assume that you are going to create the specified path. If that path is not found after the Rule was executed, a warning will be shown.
+If `not_found` is given, the rule will assume that you are going to create the specified path. If that path is not found after the rule was executed, a warning will be shown.
 
 An example of a caching rule:
 ```py
-@rule(trigger=["not_found", "changed"], path=["a.cpp", "b.cpp"], dest="program")
+@rule(changed=["a.cpp", "b.cpp"], not_found="program")
 ```
 
-##### Patterns
-Patterns are Rules that are executed multiple times for multiple files.
+This above rule will be executed if `a.cpp` or `b.cpp` have been changed, or when `program` was not found.
+Though for this particular case, pattern rules would be recommended.
+
+##### Pattern Rules
+Pattern Rules are rules that are executed multiple times for multiple files.
 They look like this:
 ```py
 @pattern("src/*.c -> obj/*.o")
