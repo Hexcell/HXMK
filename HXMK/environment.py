@@ -83,33 +83,21 @@ class Environment:
 
 # DECORATORS
 	# TODO: consider syntax in IDEA.md
-	def rule(self, *, trigger="always", path="", dest=""):
+	def rule(self, *, always=None, dependencies=None, not_found=None, changed=None):
 		"""
 		A decorator that takes care of rules.
 		"""
 
-		if type(trigger) is str: trigger = [trigger]
-
 		# parameter checking
-		if "always" in trigger and len(trigger) > 1:
+		if always and (dependencies or not_found or changed):
 			print(coloring.always_overrides)
 			exit(1)
+		
+		# set always to True by default
+		if not always and not (dependencies or not_found or changed):
+			always = True
 
-		for t in trigger:
-			if not t in ["always", "dependencies", "not_found", "changed"]:
-				print(coloring.invalid_decorator_params % (trigger, "trigger"))
-				exit(1)
-
-			if t == "not_found" and not dest:
-				print(coloring.expects_param % (t, "dest"))
-				exit(1)
-			elif t == "changed" and not path:
-				print(coloring.expects_param % (t, "path"))
-				exit(1)
-
-		# TODO: prettier error message
-		if not type(path) in [str, list]: raise ValueError
-		if not type(dest) in [str, list]: raise ValueError
+		# TODO: more parameter checking
 
 		def rule_decorator(func):
 			rule_name = (self.name + "/" if self.name else "", func.__name__)
@@ -127,15 +115,15 @@ class Environment:
 
 				# execute self
 				did_something = False
-				if self.check_triggers(trigger, deps_did_something, path, dest):
+				if self.check_triggers(deps_did_something, always, dependencies, not_found, changed):
 					print(coloring.executing_rule % rule_name)
 					func(c)
 					did_something = True
 				
 				# check if expectation was met
-				v = dest
-				if type(v) is str: v = [v]
-				if "not_found" in trigger:
+				v = not_found
+				if v:
+					if type(v) is str: v = [v]
 					for p in v:
 						if not os.path.exists(p):
 							print(coloring.expectation_not_met % p)
@@ -145,7 +133,7 @@ class Environment:
 					print(coloring.up_to_date % rule_name)
 
 				# return
-				if "always" in trigger:
+				if always:
 					return False
 				return did_something
 
@@ -201,7 +189,14 @@ class Environment:
 		return pattern_decorator
 
 # INTERNAL UTILS
-	def check_triggers(self, trigger, deps_did_something, path, dest):
+	def check_triggers(self, deps_did_something, always, dependencies, not_found, changed):
+		if always:												return True
+		if dependencies	and deps_did_something:					return True
+		if not_found	and not self.exists_str_list(not_found):return True
+		if changed		and self.files_changed(changed):		return True
+		return False
+
+	def check_triggers_(self, trigger, deps_did_something, path, dest):
 		for t in trigger:
 			if t == "always":
 				return True
