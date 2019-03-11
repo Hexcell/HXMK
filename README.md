@@ -1,4 +1,5 @@
 # HXMK (Hexcell Make)
+![PyPI](https://img.shields.io/pypi/v/HXMK.svg) ![GitHub](https://img.shields.io/github/license/Hexcell/HXMK.svg) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/HXMK.svg)
 HXMK is a python-based build system for the Hexcell Projects. It brings a Makefile like experience to a familiar and simple environment.
 
 Best of all: it has nice colors
@@ -225,6 +226,7 @@ Currently, HXMK runs just fine, but there have been and will most likely be many
  - [ ] add docstrings and comments for every function
  - [ ] full api documentation
  - [ ] better cross-platform support / more builtins (mkdir, ...)
+ - [ ] in depth compatibility testing with various python versions
 
 ### Contributing
 Any form of contribution is welcome ^^
