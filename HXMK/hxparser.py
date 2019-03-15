@@ -22,16 +22,7 @@ STAR		: "*"
 %ignore WS
 """
 
-class Debug(Indenter):
-	NL_type = '_NL'
-	OPEN_PAREN_types = []
-	CLOSE_PAREN_types = []
-	def process(self, stream):
-		for t in stream:
-			# print(t.type, t)
-			yield t
-
-parser = Lark(grammar, parser="lalr", postlex=Debug())
+parser = Lark(grammar, parser="lalr")
 
 def parse(s):
 	return hxtree.Patterns(parser.parse(s))
