@@ -13,7 +13,7 @@ setup(
 	long_description	= long_description,
 	long_description_content_type = "text/markdown",
 	packages			= find_packages(),
-	install_requires	= ["lark-parser >= 0.6.6", "colorama >= 0.4.1"],
+	install_requires	= ["lark-parser >= 0.6.6"],
 
 	entry_points = {
 		"console_scripts": [
