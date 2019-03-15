@@ -81,6 +81,13 @@ class Environment:
 	def is_root(self):
 		return self.root
 
+	def mkdir(self, *path):
+		p = os.path.join(path)
+		if not os.path.exists(p):
+			os.mkdir(p)
+			return True
+		return False
+
 # DECORATORS
 	# TODO: consider syntax in IDEA.md
 	def rule(self, *, always=None, dependencies=None, not_found=None, changed=None):
@@ -353,6 +360,7 @@ class Environment:
 		module.as_args = self.as_args
 		module.make = self.make
 		module.is_root = self.is_root
+		module.mkdir = self.mkdir
 		for l in mlocals:
 			setattr(module, l, mlocals[l])
 		module.root = self.project_root
