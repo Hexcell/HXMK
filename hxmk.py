@@ -4,7 +4,7 @@ def everything(c):
 
 @rule()
 def upload(c) -> "build":
-	c << "twine upload dist/*"
+	c << "python -m twine upload dist/*"
 
 @rule()
 def build(c):
