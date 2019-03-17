@@ -52,7 +52,7 @@ class Environment:
 
 
 		if type(l) in [list, tuple]:
-			x = "\"" + ("\" \"".join([(prefix + x.replace("\"", "\\\"") + suffix ) for x in l])) + "\""
+			x = "\"" + ("\" \"".join([(prefix + x.replace("\"", "\\\"") + suffix ) for x in l if x.strip() != ""])) + "\""
 			return x if x.strip("\"") else ""
 		
 		if type(l) is dict:
