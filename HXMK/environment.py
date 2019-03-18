@@ -177,7 +177,7 @@ class Environment:
 					if not self.file_up_to_date(files[0], files[1]) or rebuild or deps_did_something:
 						print(coloring.executing_rule % rule_name)
 						func(c, files[0], files[1])
-						self.cache[files[0]] = str(os.stat(files[0]).st_mtime)
+						self.cache[files[0]+files[1]] = str(os.stat(files[0]).st_mtime)
 						did_something = True
 
 				# check if expectation was met
@@ -248,7 +248,7 @@ class Environment:
 
 	def file_up_to_date(self, src, dest):
 		# file hasn't been cached, and thus built yet, build it
-		if not src in self.cache:
+		if not src+dest in self.cache:
 			return False
 		# output file doesn't exist, build it
 		if not os.path.isfile(dest):
@@ -256,7 +256,7 @@ class Environment:
 		# get the last modification time
 		mtime = str(os.stat(src).st_mtime)
 		# the file has been modified, build it
-		if self.cache[src] != mtime:
+		if self.cache[src+dest] != mtime:
 			return False
 
 		return True
@@ -274,6 +274,7 @@ class Environment:
 			if not file in self.cache:
 				self.cache[file] = str(os.stat(file).st_mtime)
 				return True
+
 			# get the last modification time
 			mtime = str(os.stat(file).st_mtime)
 			# the file has been modified
