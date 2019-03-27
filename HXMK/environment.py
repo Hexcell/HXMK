@@ -1,9 +1,9 @@
 import sys, os, importlib.util, json, glob, shutil
 
 try:
-	from . import hxparser, coloring
+	from . import hxparser, coloring, pattern_parser
 except Exception:
-	import hxparser, coloring
+	import hxparser, coloring, pattern_parser
 
 class Commander:
 	def __init__(self, env):
@@ -151,7 +151,8 @@ class Environment:
 		A decorator that takes care of pattern rules.
 		"""
 
-		pttrn_tree = hxparser.parse(pttrn)
+		#pttrn_tree = hxparser.parse(pttrn)
+		pttrn_tree = pattern_parser.parse(pttrn)
 		def pattern_decorator(func):
 			rule_name = (self.name + "/" if self.name else "", func.__name__)
 			
@@ -171,10 +172,10 @@ class Environment:
 				# execute self
 				ff = pttrn_tree.evaluate()
 				for files in ff:
-					if not self.file_up_to_date(files[0], files[1]) or rebuild or deps_did_something:
+					if not self.files_up_to_date(files[0], files[1]) or rebuild or deps_did_something:
 						print(coloring.executing_rule % rule_name)
 						func(c, files[0], files[1])
-						self.cache[files[0]+files[1]] = str(os.stat(files[0]).st_mtime)
+						self.files_update_cache(files[0], files[1])
 						did_something = True
 
 				# check if expectation was met
@@ -243,20 +244,41 @@ class Environment:
 		return did_something
 		
 
-	def file_up_to_date(self, src, dest):
-		# file hasn't been cached, and thus built yet, build it
-		if not src+dest in self.cache:
-			return False
-		# output file doesn't exist, build it
-		if not os.path.isfile(dest):
-			return False
-		# get the last modification time
-		mtime = str(os.stat(src).st_mtime)
-		# the file has been modified, build it
-		if self.cache[src+dest] != mtime:
-			return False
+	def files_up_to_date(self, src_, dest_):
+		src = src_
+		dest = dest_
+		if type(src) is str: src = [src]
+		if type(dest) is str: dest = [dest]
+
+		ds = "".join(dest)
+
+		for d in dest:
+			if not os.path.isfile(d):
+				return False # output file doesn't exist, build it
+
+		for s in src:
+			if not s+"->"+ds in self.cache:
+				return False # file hasn't been cached, and thus built yet, build it
+
+			# get the last modification time
+			mtime = str(os.stat(s).st_mtime)
+			# the files have been modified, build it
+			if self.cache[s+"->"+ds] != mtime:
+				return False
 
 		return True
+
+	def files_update_cache(self, src_, dest_):
+		src = src_
+		dest = dest_
+		if type(src) is str: src = [src]
+		if type(dest) is str: dest = [dest]
+
+		ds = "".join(dest)
+
+		for s in src:
+			mtime = str(os.stat(s).st_mtime)
+			self.cache[s+"->"+ds] = mtime
 
 	def files_changed(self, tsrc):
 		src = tsrc
