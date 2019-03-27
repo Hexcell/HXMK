@@ -13,6 +13,9 @@ Best of all: it has nice colors
 pip install HXMK
 ```
 
+Dependencies:
+- [colorama](https://pypi.org/project/colorama/) >= 0.4.1
+
 ##### Manual (latest version)
 ```shell
 $ git clone https://github.com/Hexcell/HXMK.git
