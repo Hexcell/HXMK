@@ -121,12 +121,19 @@ def somerule(c, src, dest):
 (The syntax for the patterns is `src -> dest`.)
 This basically means, every `.c` file in `src` will be turned into an `.o` file in `obj`.
 The Pattern Rule will be executed for every `.c` file.
-This could be used to compile every `.c` file in a directory.#
+This could be used to compile every `.c` file in a directory.
 ```py
 @pattern("src/*.c -> obj/*.o")
 def somerule(c, src, dest):
-    c << "gcc -c %s -o %s" % (src, dest)
+    c << f"gcc -c {src} -o {dest}"
 ```
+Pattern Rules can have multiple sources and destinations. In that case, the parameters `src` and `dest` are lists.
+```py
+@pattern("src/*.c include/*.h -> obj/*.o")
+def somerule(c, src, dest):
+    c << f"gcc -c {src[0]} -o {dest}"
+```
+
 Pattern rules are cached.
 Before executing, the Pattern Rule checks whether the source files have been modified since the last build and if the destination file exists already. If the destination file does not exist, the rule will be executed, else it will only be executed if the source file was modified or not found in the cache.
 
