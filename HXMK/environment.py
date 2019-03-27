@@ -82,9 +82,12 @@ class Environment:
 		return self.root
 
 	def mkdir(self, *path):
+		d = False
 		for p in path:
-			np = p.replace('\\\\', '/') if os.name == 'posix' else p.replace('/', '\\\\')
-			os.system(f"mkdir {'-p' if os.name == 'posix' else ''} {np}")
+			if not os.path.exists(p):
+				os.mkdir(p)
+				d = True
+		return d
 
 # DECORATORS
 	# TODO: consider syntax in IDEA.md
