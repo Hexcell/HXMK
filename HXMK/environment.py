@@ -1,9 +1,9 @@
 import sys, os, importlib.util, json, glob, shutil
 
 try:
-	from . import hxparser, coloring, pattern_parser
+	from . import coloring, pattern_parser
 except Exception:
-	import hxparser, coloring, pattern_parser
+	import coloring, pattern_parser
 
 class Commander:
 	def __init__(self, env):
@@ -151,7 +151,6 @@ class Environment:
 		A decorator that takes care of pattern rules.
 		"""
 
-		#pttrn_tree = hxparser.parse(pttrn)
 		pttrn_tree = pattern_parser.parse(pttrn)
 		def pattern_decorator(func):
 			rule_name = (self.name + "/" if self.name else "", func.__name__)
