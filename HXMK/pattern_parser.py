@@ -70,14 +70,18 @@ class PatternCollection:
 	def __init__(self, parts):
 		self.src = []
 		self.dest = []
+		self.src_c = 0
+		self.dest_c = 0
 
 		if len(parts) > 2: raise InvalidPatternError
 
 		for p in parts[0]:
 			self.src.append(Pattern(p))
+			self.src_c += 1
 
 		for p in parts[1]:
 			self.dest.append(Pattern(p))
+			self.dest_c += 1
 
 	def evaluate(self):
 		# the first source given is the most significant
@@ -98,8 +102,8 @@ class PatternCollection:
 			for f in self.dest:
 				dd.append(f.dest_insert(s["groups"]))
 
-			if len(ss) == 1: ss = ss[0]
-			if len(dd) == 1: dd = dd[0]
+			if self.src_c	== 1: ss = ss[0]
+			if self.dest_c	== 1: dd = dd[0]
 
 			r.append((ss, dd))
 
