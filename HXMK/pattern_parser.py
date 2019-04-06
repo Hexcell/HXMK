@@ -3,6 +3,8 @@ import glob, re, os
 class InvalidPatternError(Exception):
 	pass
 
+# TODO fix bug where x/*.y works but *.y doesn't
+
 def get_regex(parts):
 	r = r"^"
 	for p in parts:
